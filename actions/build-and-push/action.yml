@@ -44,10 +44,12 @@ runs:
         version: latest
 
     - name: sign-in to artifact registry
+      shell: bash
       run: |
         gcloud auth configure-docker ${{ inputs.artifact_registry_region }} --quiet
 
     - name: Build and Push Container
+      shell: bash
       run: |-
         docker build -t "${{ inputs.artifact_registry_region }}/${{ inputs.gcp_project_name }}/${{ inputs.artifact_registry_name }}/${{ inputs.artifact_registry_application }}:${{ inputs.version }}" ./
         docker push "${{ inputs.artifact_registry_region }}/${{ inputs.gcp_project_name }}/${{ inputs.artifact_registry_name }}/${{ inputs.artifact_registry_application }}:${{ inputs.version }}"
