@@ -1,6 +1,11 @@
 name: Release
 description: Automate the release process using semantic-release
 
+inputs:
+  github-token:
+    description: The GitHub token to use for authentication
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -16,6 +21,7 @@ runs:
 
     - id: install-dependencies
       name: Install dependencies
+      shell: bash
       run: |
         npm install \
           semantic-release \
@@ -29,6 +35,7 @@ runs:
     - id: release
       name: Release
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      shell: bash
       run: |
         npx semantic-release

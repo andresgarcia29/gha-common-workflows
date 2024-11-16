@@ -26,6 +26,7 @@ runs:
 
     - id: install-dependencies
       name: Install dependencies
+      shell: bash
       run: |
         npm install \
           semantic-release \
@@ -38,6 +39,7 @@ runs:
 
     - id: get-version
       name: Get Next Version
+      shell: bash
       run: |
         npx semantic-release --dry-run --no-ci
       env:
@@ -47,6 +49,7 @@ runs:
       name: Get Next Version Output
       env:
         NEXT_RELEASE_VERSION: ${{ env.NEXT_RELEASE_VERSION }}
+      shell: bash
       run: |
         echo $NEXT_RELEASE_VERSION
         echo "version=${NEXT_RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
