@@ -1,0 +1,47 @@
+name: Get Next Version
+description: Get the next version for the current build
+
+outputs:
+  version:
+    description: The next version for the current build
+    value: ${{ steps.get-next-version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:-
+    - id: checkout
+      name: Checkout
+      uses: actions/checkout@v4
+
+    - id: setup-node
+      name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "lts/*"
+
+    - id: install-dependencies
+      name: Install dependencies
+      run: |
+        npm install \
+          semantic-release \
+          @semantic-release/commit-analyzer \
+          @semantic-release/release-notes-generator \
+          @semantic-release/changelog \
+          @semantic-release/git \
+          @semantic-release/github \
+          @semantic-release/exec
+
+    - id: get-version
+      name: Get Next Version
+      run: |
+        npx semantic-release --dry-run --no-ci
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - id: get-next-version
+      name: Get Next Version Output
+      env:
+        NEXT_RELEASE_VERSION: ${{ env.NEXT_RELEASE_VERSION }}
+      run: |
+        echo $NEXT_RELEASE_VERSION
+        echo "version=${NEXT_RELEASE_VERSION}" >> "$GITHUB_OUTPUT"

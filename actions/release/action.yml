@@ -1,0 +1,34 @@
+name: Release
+description: Automate the release process using semantic-release
+
+runs:
+  using: "composite"
+  steps:
+    - id: checkout
+      name: Checkout
+      uses: actions/checkout@v4
+
+    - id: setup-node
+      name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "lts/*"
+
+    - id: install-dependencies
+      name: Install dependencies
+      run: |
+        npm install \
+          semantic-release \
+          @semantic-release/commit-analyzer \
+          @semantic-release/release-notes-generator \
+          @semantic-release/changelog \
+          @semantic-release/git \
+          @semantic-release/github \
+          @semantic-release/exec
+
+    - id: release
+      name: Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        npx semantic-release
