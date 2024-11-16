@@ -1,6 +1,11 @@
 name: Get Next Version
 description: Get the next version for the current build
 
+inputs:
+  github-token:
+    description: The GitHub token to use for authentication
+    required: true
+
 outputs:
   version:
     description: The next version for the current build
@@ -36,7 +41,7 @@ runs:
       run: |
         npx semantic-release --dry-run --no-ci
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - id: get-next-version
       name: Get Next Version Output
