@@ -28,7 +28,7 @@ runs:
       name: Install dependencies
       shell: bash
       run: |
-        npm install \
+        npm install -G \
           semantic-release \
           @semantic-release/commit-analyzer \
           @semantic-release/release-notes-generator \
