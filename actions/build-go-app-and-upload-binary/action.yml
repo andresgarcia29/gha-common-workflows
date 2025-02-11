@@ -1,0 +1,54 @@
+name: Build Go App and Upload Binary
+description: Build and upload a Go application binary to S3
+
+inputs:
+  aws_region:
+    description: "AWS Region"
+    required: true
+  aws_ecr_role_arn:
+    description: "AWS S3 role"
+    required: true
+  aws_bucket_name:
+    description: "Name of the S3 bucket"
+    required: true
+  go_version:
+    description: "Go version"
+    default: "^1.23"
+    required: true
+  app_name:
+    description: "Name of the application"
+    required: true
+  app_version:
+    description: "Version of the application"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - id: checkout
+      name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws_ecr_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Config go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ inputs.go_version }}
+    
+    - name: Build Go App
+      env:
+        CC: x86_64-apple-darwin20.6.0-clang
+        CXX: x86_64-apple-darwin20.6.0-clang++
+        GOOS: darwin
+        GOARCH: amd64
+        CGO_ENABLED: 1
+      run: go build -o ${{ inputs.app_name }} -v
+    
+    - name: Upload binary to S3
+      run: aws s3 cp ${{ inputs.app_name }} s3://${{ inputs.aws_bucket_name }}/${{ inputs.app_name }}/${{ inputs.app_version }}/${{ inputs.app_name }}-${{ inputs.app_version }}-darwin-amd64
