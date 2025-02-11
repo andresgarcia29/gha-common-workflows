@@ -42,6 +42,7 @@ runs:
         go-version: ${{ inputs.go_version }}
     
     - name: Build Go App
+      shell: bash
       env:
         CC: x86_64-apple-darwin20.6.0-clang
         CXX: x86_64-apple-darwin20.6.0-clang++
@@ -51,4 +52,5 @@ runs:
       run: go build -o ${{ inputs.app_name }} -v
     
     - name: Upload binary to S3
+      shell: bash
       run: aws s3 cp ${{ inputs.app_name }} s3://${{ inputs.aws_bucket_name }}/${{ inputs.app_name }}/${{ inputs.app_version }}/${{ inputs.app_name }}-${{ inputs.app_version }}-darwin-amd64
