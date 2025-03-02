@@ -1,0 +1,35 @@
+name: Deploy to Cloud Run
+description: Deploy to Cloud Run
+
+inputs:
+  workload_identity_provider:
+    description: The workload identity provider to use for authentication
+    required: true
+  service_account:
+    description: The service account to use for authentication
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - id: checkout
+      name: Checkout
+      uses: actions/checkout@v4
+
+    - id: auth
+      name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ inputs.workload_identity_provider }}
+        service_account: ${{ inputs.service_account }}
+
+    - uses: google-github-actions/setup-gcloud@v2
+      with:
+        version: latest
+
+    - name: Deploy to Cloud Run
+      shell: bash
+      run: |
+        gcloud run services replace service.yaml --platform managed --region us-central1
+
