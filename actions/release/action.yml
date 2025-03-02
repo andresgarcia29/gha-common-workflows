@@ -6,6 +6,11 @@ inputs:
     description: The GitHub token to use for authentication
     required: true
 
+outputs:
+  version:
+    description: The version that was released
+    value: ${{ steps.get-next-version.outputs.version }}
+
 runs:
   using: "composite"
   steps:
@@ -39,3 +44,12 @@ runs:
       shell: bash
       run: |
         npx semantic-release
+
+    - id: get-version
+      name: Get Version Output
+      env:
+        NEXT_RELEASE_VERSION: ${{ env.NEXT_RELEASE_VERSION }}
+      shell: bash
+      run: |
+        echo $NEXT_RELEASE_VERSION
+        echo "version=${NEXT_RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
